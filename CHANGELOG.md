@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.2] - 2026-11-01
+### Changed
+- **CI/CD Workflow**: Removed GitHub Pages deployment and related artifacts from `.github/workflows/release.yml`. Releases now focus strictly on automated tagging, building, and publishing release zip assets.
+
 ## [1.0.1] - 2026-11-01
 ### Changed
 - **Documentation**: Adapted and updated `README.md` to fully reflect the actual state of the game:

@@ -150,7 +150,7 @@
 * **Стилизация интерфейса**: [Tailwind CSS 3](https://tailwindcss.com/)
 * **Типизация**: [TypeScript 5](https://www.typescriptlang.org/)
 * **Сборка и HMR**: [Vite 5](https://vitejs.dev/)
-* **CI/CD**: GitHub Actions (авто-билд, авто-релиз, упаковка zip и деплой на GitHub Pages)
+* **CI/CD**: GitHub Actions (авто-проверка сборки, авто-релизы и упаковка zip-архива)
 
 ---
 
