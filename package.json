@@ -1,0 +1,40 @@
+{
+  "name": "solo-mmo-midgard-camp",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Solo MMO RPG inspired by Ragnarok Online with camp auto-hunting, procedural PixiJS chibi visuals, and deep itemization.",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "release": "node scripts/release.cjs",
+    "release:patch": "node scripts/release.cjs patch",
+    "release:minor": "node scripts/release.cjs minor",
+    "release:major": "node scripts/release.cjs major"
+  },
+  "keywords": [
+    "ragnarok-online",
+    "pixi-js",
+    "preact",
+    "typescript",
+    "vite",
+    "tailwind",
+    "rpg",
+    "solo-mmo",
+    "game"
+  ],
+  "dependencies": {
+    "pixi.js": "^7.4.2",
+    "preact": "^10.22.0"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.8.2",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.4",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.11"
+  }
+}
