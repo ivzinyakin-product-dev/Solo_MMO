@@ -1,0 +1,103 @@
+name: Automated Release & Deploy
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: 'release'
+  cancel-in-progress: false
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - name: Determine Version & Check Tag
+        id: ver
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            TAG="${{ github.ref_name }}"
+            VERSION="${TAG#v}"
+            SHOULD_RELEASE="true"
+          else
+            VERSION=$(node -p "require('./package.json').version")
+            TAG="v$VERSION"
+            # Check if tag already exists in remote
+            if git rev-parse "$TAG" >/dev/null 2>&1; then
+              echo "Tag $TAG already exists, skipping duplicate release creation."
+              SHOULD_RELEASE="false"
+            else
+              echo "New version detected: $TAG. Will create release."
+              SHOULD_RELEASE="true"
+              # Create and push tag
+              git config user.name "github-actions[bot]"
+              git config user.email "github-actions[bot]@users.noreply.github.com"
+              git tag -a "$TAG" -m "Release $TAG"
+              git push origin "$TAG"
+            fi
+          fi
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "should_release=$SHOULD_RELEASE" >> $GITHUB_OUTPUT
+
+      - name: Package game build
+        if: steps.ver.outputs.should_release == 'true'
+        run: |
+          cd dist
+          zip -r ../solo-mmo-${{ steps.ver.outputs.tag }}.zip ./*
+          cd ..
+
+      - name: Create GitHub Release
+        if: steps.ver.outputs.should_release == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.ver.outputs.tag }}
+          name: "Release ${{ steps.ver.outputs.tag }}"
+          generate_release_notes: true
+          files: |
+            solo-mmo-${{ steps.ver.outputs.tag }}.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'dist'
+
+  deploy-pages:
+    needs: build-and-release
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,6 +1,6 @@
 {
   "name": "solo-mmo-midgard-camp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Solo MMO RPG inspired by Ragnarok Online with camp auto-hunting, procedural PixiJS chibi visuals, and deep itemization.",
   "type": "module",
